@@ -8,12 +8,18 @@ const MallSelectorProps = {
 };
 
 const Poi: React.FC<InferProps<typeof MallSelectorProps>> = ({ points }) => {
-  const realStage = useRef(null);
-
+  const realLine = useRef(null);
+  useMount(() => {
+    console.log(realLine);
+  });
+  const line = points.flat()
+  console.log(line)
   return (
     <Line
-      points={points}
-      fill='red'
+      ref={realLine}
+      points={line}
+      fill={'red'}
+      closed={true}
     />
   );
 };

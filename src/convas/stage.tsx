@@ -2,13 +2,17 @@ import React, { useRef, useState } from 'react';
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import { useMount } from 'react-use';
 import buildings from '../mock/building.json';
+import Poi from './poi';
 
 const getPois = (stage: any) => {
   return buildings.Area.features.map((poi) => {
     const res = poi.geometry.coordinates[0].map((point: number[]) =>
       toPoint(point, stage)
-    );
-    return res;
+    )
+    return {
+      points: res,
+      id: poi.id
+    };
   });
 };
 
@@ -25,17 +29,18 @@ const toPoint = ([x, y]: number[], stage: any) => {
   const minX = buildings.bounds.min_x;
   const minY = buildings.bounds.min_y;
   const size = buildings.real_size[2];
-  return { x: (x - minX) / (size * s), y: (y - minY) / (size * s) };
+  return [(x - minX) / (size * s), (y - minY) / (size * s)];
 };
 
 const MainStage: React.FC = () => {
   const realStage = useRef(null);
-  const [pois, setPois] = useState([])
+  const [pois, setPois] = useState<any[]>([])
   useMount(() => {
     console.log(realStage);
     const { current } = realStage;
     const pois = getPois(current)
     setPois(pois)
+    console.log(pois)
   });
 
   return (
@@ -45,9 +50,7 @@ const MainStage: React.FC = () => {
       ref={realStage}
     >
       <Layer>
-        {.map((points) => {
-
-        })}
+        {pois.map((poi) => <Poi key={poi.id} points={poi.points} />)}
       </Layer>
     </Stage>
   );
